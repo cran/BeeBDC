@@ -93,8 +93,7 @@ renv::activate(project = paste0(RootPath,"/Data_acquisition_workflow"))
 #  library(rnaturalearthhires)
 
 ## ----installBeeBDC, results=TRUE, message=TRUE, eval = FALSE, collapse = TRUE----
-#  devtools::install_github("https://github.com/jbdorey/BeeBDC.git", ref = "main",
-#                          force = FALSE)
+#  install.packages("BeeBDC")
 #  library(BeeBDC)
 
 ## ----snapshot, collapse = TRUE------------------------------------------------
@@ -106,7 +105,7 @@ renv::snapshot(project = paste0(RootPath,"/Data_acquisition_workflow"),
 #      RootPath = RootPath,
 #      RDoc = "vignettes/BeeBDC_main.Rmd") %>%
 #        # Add paths created by this function to the environment()
-#      list2env(envir = environment())
+#      list2env(envir = parent.env(environment()))
 
 ## ----dirMakerSECRETELY, include = FALSE---------------------------------------
 # For the sake of this tutorial, we will not use here::i_am in dirMaker, because we aren't allowed
@@ -404,17 +403,25 @@ database <-
 database <- dplyr::bind_cols(database)
 rm(parse_names)
 
-## ----4.2, collapse = TRUE, eval = TRUE----------------------------------------
-beesTaxonomy <- BeeBDC::beesTaxonomy()
+## ----4.2, collapse = TRUE, eval = FALSE---------------------------------------
+#  taxonomyFile <- BeeBDC::beesTaxonomy()
+
+## ----4.2secret, collapse = TRUE, eval = TRUE----------------------------------
+  # load in the small test dataset i nthe background
+system.file("extdata", "testTaxonomy.rda", package="BeeBDC") |>
+  load()
+  # Rename the file
+taxonomyFile <- testTaxonomy
+rm(testTaxonomy)
 
 ## ----4.2ii, collapse = TRUE---------------------------------------------------
 database <- BeeBDC::harmoniseR(path = DataPath, #The path to a folder that the output can be saved
-                       taxonomy = beesTaxonomy, # The formatted taxonomy file
+                       taxonomy = taxonomyFile, # The formatted taxonomy file
                        data = database,
                        mc.cores = 1)
 
 ## ----4.2iii, collapse = TRUE--------------------------------------------------
-rm(beesTaxonomy)
+rm(taxonomyFile)
 
 ## ----4.2iv, eval = FALSE, collapse = TRUE-------------------------------------
 #  database %>%
@@ -581,11 +588,19 @@ check_space <- BeeBDC::coordUncerFlagR(data = check_space,
                                uncerColumn = "coordinateUncertaintyInMeters",
                                threshold = 1000)
 
-## ----5.5, collapse = TRUE, eval = TRUE----------------------------------------
-beesChecklist <- BeeBDC::beesChecklist()
+## ----5.5, collapse = TRUE, eval = FALSE---------------------------------------
+#  checklistFile <- BeeBDC::beesChecklist()
+
+## ----5.5secret, collapse = TRUE, eval = TRUE----------------------------------
+  # load in the small test dataset i nthe background
+system.file("extdata", "testChecklist.rda", package="BeeBDC") |>
+  load()
+  # Rename the file
+taxonomyFile <- testChecklist
+rm(testChecklist)
 
 ## ----5.5ii, collapse = TRUE---------------------------------------------------
-check_space <- BeeBDC::countryOutlieRs(checklist = beesChecklist,
+check_space <- BeeBDC::countryOutlieRs(checklist = checklistFile,
                         data = check_space,
                         keepAdjacentCountry = TRUE,
                         pointBuffer = 0.05,
@@ -739,7 +754,7 @@ check_time <- BeeBDC::summaryFun(
 #                     paste(OutPath_Intermediate, "04_time_database.csv",
 #                           sep = "/"))
 
-## ---- eval = FALSE, collapse = TRUE-------------------------------------------
+## ----eval = FALSE, collapse = TRUE--------------------------------------------
 #  BeeBDC::flagRecorder(
 #    data = check_time,
 #    outPath = paste(OutPath_Report, sep =""),
@@ -782,7 +797,7 @@ check_time <- BeeBDC::dupeSummary(
    # try unique(check_time$dataSource)
   sourceOrder = c("CAES", "Gai", "Ecd","BMont", "BMin", "EPEL", "ASP", "KP", "EcoS", "EaCO",
                   "FSCA", "Bal", "SMC", "Lic", "Arm",
-                  "USGS", "ALA", "GBIF","SCAN","iDigBio"),
+                  "USGS", "ALA", "VicWam", "GBIF","SCAN","iDigBio"),
     # Paige ordering is done using the database_id prefix, not the dataSource prefix.
   prefixOrder = c("Paige", "Dorey"),
     # Set the complexity threshold for id letter and number length
@@ -950,7 +965,7 @@ BeeBDC::plotFlagSummary(
   # Extra variables can be fed into forcats::fct_recode() to change names on plot
   GBIF = "GBIF", SCAN = "SCAN", iDigBio = "iDigBio", USGS = "USGS", ALA = "ALA", 
   ASP = "ASP", CAES = "CAES", 'BMont' = "BMont", 'BMin' = "BMin", Ecd = "Ecd",
-  Gaiarsa = "Gai", EPEL = "EPEL",
+  Gaiarsa = "Gai", EPEL = "EPEL", VicWam = "VicWam",
   returnPlot = TRUE
 )
 

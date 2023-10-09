@@ -75,31 +75,66 @@
 #'\dontrun{
 #' beesChecklist <- BeeBDC::beesChecklist()
 #'}
-
-
 beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/42320598?private_link=bce1f92848c2ced313ee",
                           ...){
-  destfile <- checklist <- attempt <- NULL
+  destfile <- checklist <- attempt <- nAttempts <- error_funcFile <- error_func <- NULL
+  
+  # Set the number of attempts
+  nAttempts = 5
+    
+    # Set up the error message function
+  error_func <- function(e){
+    message(paste("Download attempt failed..."))
+  }
+  error_funcFile <- function(e){
+    message(paste("Could not read download..."))
+  }
+  
+    # Check operating system
+  OS <- dplyr::if_else(.Platform$OS.type == "unix",
+                                             "MacLinux",
+                                             "Windows")
   
   # Run a code to download the data and deal with potential internet issues
   checklist <- NULL                                 
-  attempt <- 0 
+  attempt <- 1 
   suppressWarnings(
-    while( is.null(checklist) && attempt <= 3) {    
+    while( is.null(checklist) && attempt <= nAttempts) {    
+        # Don't attempt for the last attempt
+      if(attempt < nAttempts){
+        
+  # WINDOWS
+        if(OS != "MacLinux"){
       # Download the file
-      try(utils::download.file(URL, destfile = paste0(tempdir(), "/beesChecklist.Rda")),
-          silent = TRUE)
+      tryCatch(utils::download.file(URL, destfile = normalizePath(paste0(tempdir(),
+                                                                         "/beesChecklist.Rda"))),
+          error = error_func, warning = error_func)
       # Load the file 
-      try(
-        checklist <- base::readRDS(paste0(tempdir(), "/beesChecklist.Rda")),
-        silent = TRUE)
+        tryCatch(
+        checklist <- base::readRDS(normalizePath(paste0(tempdir(), "/beesChecklist.Rda"))),
+        error = error_funcFile, warning = error_funcFile)
+        }else{
+  # MAC OR LINUX
+          # Download the file
+          tryCatch(utils::download.file(URL, destfile = paste0(tempdir(), "/beesChecklist.Rda")),
+                   error = error_func, warning = error_func)
+          # Load the file 
+          tryCatch(
+            checklist <- base::readRDS(paste0(tempdir(), "/beesChecklist.Rda")),
+            error = error_funcFile, warning = error_funcFile)
+        }
+        
+      } # END if
+
       
-      # Count the next attempt
-      attempt <- attempt + 1       
+      if(attempt < nAttempts){
       # Wait one second before the next request 
       if(attempt > 1){Sys.sleep(1)            
-        print( paste("Attempt: ", attempt, " of 4"))}    # Inform user of number of attempts
-    } 
+        print( paste("Attempt: ", attempt, " of ", nAttempts-1))}    # Inform user of number of attempts
+      } # END IF #2
+      # Count the next attempt
+      attempt <- attempt + 1   
+    } # END while 
   )
   
   if(is.null(checklist)){

@@ -63,8 +63,14 @@ requireNamespace("ggspatial")
 requireNamespace("mgsub")
 requireNamespace("terra")
 
+country
   #### 0.0 Prep ####
-    ###### 0.1 Coord quality ####
+    ###### 0.1 fatal errors ####
+if(!any(colnames(data) %in% "country")){
+stop("There is no column called 'country' in the dataset. This is a minimum requirement.")
+  }
+  
+    ###### 0.2 Coord quality ####
 if(!any(colnames(data) %in% ".coordinates_outOfRange")){
     writeLines("No '.coordinates_outOfRange' column found, running bdc_coordinates_outOfRange...")
   data <- bdc::bdc_coordinates_outOfRange(
@@ -72,6 +78,7 @@ if(!any(colnames(data) %in% ".coordinates_outOfRange")){
     lat = lat,
     lon = lon)
 }
+###### 0.3 columns present ####
 if(!any(colnames(data) %in% ".coordinates_empty")){
   writeLines("No '.coordinates_empty' column found, running bdc_coordinates_empty")
   data <- bdc::bdc_coordinates_empty(
@@ -79,6 +86,22 @@ if(!any(colnames(data) %in% ".coordinates_empty")){
     lat = lat,
     lon = lon)
 }
+if(!any(colnames(data) %in% "country_suggested")){
+  writeLines(paste0("No 'country_suggested' column found, adding an empty (NA) placeholder. This",
+                    " column can be added by running bdc::bdc_country_standardized() on the ",
+                    "input data."))
+  data <- data %>%
+    dplyr::mutate(country_suggested = NA_character_)
+}
+if(!any(colnames(data) %in% "countryCode")){
+  writeLines(paste0("No 'countryCode' column found, adding an empty (NA) placeholder. This",
+                    " column can be added by running bdc::bdc_country_standardized() on the ",
+                    "input data."))
+  data <- data %>%
+    dplyr::mutate(countryCode = NA_character_)
+}
+
+
   # Remove poor-quality coordinates
 dataR <- data %>%
   dplyr::filter(!.coordinates_outOfRange == FALSE) %>%
@@ -87,8 +110,9 @@ dataR <- data %>%
 
     # Reduce dataset 
   dataR <- dataR %>%
-    dplyr::select(database_id, decimalLatitude, decimalLongitude, country, countryCode,
-                  country_suggested) %>%
+    dplyr::select(
+      tidyselect::any_of(c("database_id", "decimalLatitude", "decimalLongitude",
+                         "country", "countryCode","country_suggested"))) %>%
       # Remove lat/lon NAs
     dplyr::filter(!is.na(decimalLatitude)) %>% dplyr::filter(!is.na(decimalLongitude))
   
@@ -159,8 +183,9 @@ sp <- sf::st_as_sf(dataR, coords = c(lon, lat),
 failed_extract <- country_extracted %>%
     # Find the mis-matched countries
   dplyr::filter(!tolower(country) %in% c(tolower(name_long), tolower(admin),
-                                                   tolower(sovereignt), tolower(name),
-                                         tolower(country_suggested))) %>%
+                                                   tolower(sovereignt), tolower(name))) %>%
+  dplyr::filter(!tolower(country_suggested) %in% c(tolower(name_long), tolower(admin),
+                                                   tolower(sovereignt), tolower(name))) %>%
   dplyr::filter(!tolower(iso_a2) %in% c(tolower(country), tolower(countryCode))) %>%
     # Remove NA countries
   dplyr::filter(!is.na(country)) %>%
@@ -175,8 +200,9 @@ failed_extract$country <-
 failed_extract <- failed_extract %>%
   # Find the mis-matched countries
   dplyr::filter(!tolower(country) %in% c(tolower(name_long), tolower(admin),
-                                         tolower(sovereignt), tolower(name),
-                                         tolower(country_suggested))) %>%
+                                                   tolower(sovereignt), tolower(name))) %>%
+  dplyr::filter(!tolower(country_suggested) %in% c(tolower(name_long), tolower(admin),
+                                                   tolower(sovereignt), tolower(name))) %>%
   dplyr::filter(!tolower(iso_a2) %in% c(tolower(country), tolower(countryCode))) %>%
   # Remove NA countries
   dplyr::filter(!is.na(country)) %>%
@@ -215,18 +241,20 @@ suppressWarnings({
     # Find MATCHES #
   # With country
 fExtr_1 <- failed_extract_2 %>% 
-  dplyr::filter(tolower(country) %in% c(tolower(name_long), tolower(admin),
-                                        tolower(sovereignt), tolower(name),
-                                        tolower(country_suggested)))
+  dplyr::filter(!tolower(country) %in% c(tolower(name_long), tolower(admin),
+                                         tolower(sovereignt), tolower(name))) %>%
+  dplyr::filter(!tolower(country_suggested) %in% c(tolower(name_long), tolower(admin),
+                                                   tolower(sovereignt), tolower(name)))
   # With iso_a2
 fExtr_2 <- failed_extract_2 %>% 
   dplyr::filter(tolower(iso_a2) %in% c(tolower(country), tolower(countryCode)))
 
 ids2keep <- dplyr::bind_rows(fExtr_1, fExtr_2) %>%
   # Find the mis-matched countries
-  dplyr::filter(tolower(country) %in% c(tolower(name_long), tolower(admin),
-                                        tolower(sovereignt), tolower(name),
-                                        tolower(country_suggested))) %>%
+  dplyr::filter(!tolower(country) %in% c(tolower(name_long), tolower(admin),
+                                         tolower(sovereignt), tolower(name))) %>%
+  dplyr::filter(!tolower(country_suggested) %in% c(tolower(name_long), tolower(admin),
+                                                   tolower(sovereignt), tolower(name))) %>%
   dplyr::filter(tolower(iso_a2) %in% c(tolower(country), tolower(countryCode))) %>%
     # Keep only the database id
   dplyr::select(database_id)

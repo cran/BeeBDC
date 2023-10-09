@@ -1,5 +1,3 @@
-BeeBDC
-================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -21,7 +19,7 @@ status](https://www.r-pkg.org/badges/version/BeeBDC)](https://CRAN.R-project.org
 
 The consistent implementation of biodiversity data continues to be a
 challenge for researchers. We present the **BeeBDC** package which
-provides novel and udpated functions for flagging, cleaning, and
+provides novel and updated functions for flagging, cleaning, and
 visualising occurrence datasets. Our functions are mostly general in
 regards to taxon; however, we also provide some functions and data that
 are specific for use with bee occurrence data. We build upon functions
@@ -54,9 +52,54 @@ and CoordinateCleaner.
 > <https://doi.org/10.1101/2023.06.30.547152>; Package GitHub -
 > <https://github.com/jbdorey/BeeBDC/>
 
-#### ![Workflow figure from Dorey et al. 2023](https://photos.smugmug.com/photos/i-V37Vg2w/2/X4/i-V37Vg2w-X4.jpg)
+#### ![Workflow figure from Dorey et al. 2023](https://photos.smugmug.com/photos/i-V37Vg2w/4/X4/i-V37Vg2w-X4.jpg)
 
-<br/>
+#### **Installation**
+
+You can install *BeeBDC* from CRAN or GitHub.
+
+``` r
+  # Install BeeBDC from CRAN
+install.packages("BeeBDC")
+
+  # Or using the development version from GitHub (keeping in mind this may not be as stable)
+remotes::install_github("https://github.com/jbdorey/BeeBDC.git", user="jbdorey", 
+                          # To use the development version use "devel"; otherwise choose "main"
+                        ref = "devel", force = TRUE)
+```
+
+Two optional packages can also be downloaded prior to starting your
+workflow, if desired. But, these are not essential. The packages
+BiocManager and devtools may also be required to download the two extra
+packages.
+
+1.  The first package, **rnaturalearthhires**, is a data package that
+    allows the usage of higher-resolution country maps and is very
+    useful for multiple **BeeBDC** functions.
+2.  The second package, **ComplexHeatmap**, is only used for one
+    **BeeBDC** function (`chordDiagramR()`) and is less critical.
+
+When either of these packages are called, the user will be prompted to
+install them. However, the latter may try to restart your R session.
+
+``` r
+  # These two packages may need to be installed in order to install the actual required packages 
+    # below.
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
+
+  # Install ComplexHeatmap and rnaturalearthhires
+devtools::install_github("ropensci/rnaturalearthhires")
+BiocManager::install("ComplexHeatmap")
+```
+
+Load the package with:
+
+``` r
+library(BeeBDC)
+```
 
 #### 1. [**Data merge**](https://jbdorey.github.io/BeeBDC/articles/BeeBDC_main.html#data-merge)
 
@@ -304,31 +347,6 @@ system.file("extdata", "testChecklist.rda", package="BeeBDC") |> load()
 View(testChecklist)
 ```
 
-#### **Installation**
-
-You can install *BeeBDC* from GitHub and a CRAN release will be
-forthcoming.
-
-``` r
-  # If required, download some package management tools
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-if (!require("devtools", quietly = TRUE))
-    install.packages("devtools")
-  # Install ComplexHeatmap and rnaturalearthhires
-devtools::install_github("ropensci/rnaturalearthhires")
-BiocManager::install("ComplexHeatmap")
-
-  # Install BeeBDC
-devtools::install_github("https://github.com/jbdorey/BeeBDC.git", ref = "main")
-```
-
-Load the package with:
-
-``` r
-library(BeeBDC)
-```
-
 #### **Package website**
 
 See *BeeBDC* package website
@@ -349,10 +367,10 @@ Lichtenberg, E. M., Tucker, E., Smith-Pardo, A., Falcon-Brindis, A.,
 Guevara, D. A., Ribeiro, B. R., De Pedro, D., Fischer, E., Hung, J.
 K.-L., Parys, K. A., Rogan, M. S., Minckley, R. L., Velzco, S. J. E.,
 Griswold, T., Zarrillo, T. A., Sica, Y., Orr, M. C., Guzman, L. M.,
-Ascher, J., Hughes, A. C. & Cobb, N. S. In review. BeeBDC: A new R
-package and globally synthesised and flagged bee occurrence dataset.
-Scientific Data.
+Ascher, J., Hughes, A. C. & Cobb, N. S. Accepted. A globally synthesised
+and flagged bee occurrence dataset and cleaning workflow. Scientific
+Data.
 
 Package citation: Dorey, J. B., O’Reilly, R. L., Bossert, S., Fischer,
 E. (2023). BeeBDC: an occurrence data cleaning package. R package
-version 1.0.0. url: <https://github.com/jbdorey/BeeBDC>
+version 1.0.1. url: <https://github.com/jbdorey/BeeBDC>

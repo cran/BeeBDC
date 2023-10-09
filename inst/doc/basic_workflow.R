@@ -93,8 +93,7 @@ renv::activate(project = paste0(RootPath,"/Data_acquisition_workflow"))
 #  library(rnaturalearthhires)
 
 ## ----installBeeBDC, results=TRUE, message=TRUE, eval = FALSE, collapse = TRUE----
-#  devtools::install_github("https://github.com/jbdorey/BeeBDC.git", ref = "main",
-#                          force = FALSE)
+#  install.packages("BeeBDC")
 #  library(BeeBDC)
 
 ## ----snapshot, collapse = TRUE------------------------------------------------
@@ -106,7 +105,7 @@ renv::snapshot(project = paste0(RootPath,"/Data_acquisition_workflow"),
 #      RootPath = RootPath,
 #      RDoc = "vignettes/BeeBDC_main.Rmd") %>%
 #        # Add paths created by this function to the environment()
-#      list2env(envir = environment())
+#      list2env(envir = parent.env(environment()))
 
 ## ----dirMakerSECRETELY, include = FALSE---------------------------------------
 # For the sake of this tutorial, we will not use here::i_am in dirMaker, because we aren't allowed
@@ -132,14 +131,24 @@ if (!dir.exists(OutPath_Report)) {
 lapply(c("ComplexHeatmap", "magrittr"), 
        library, character.only = TRUE)
 
-## ----2.0----------------------------------------------------------------------
-# Load some package data — the taxonomy and a flagged example dataset
-  # Download the full beesTaxonomy file
-beesTaxonomy <- BeeBDC::beesTaxonomy()
+## ----2.0, eval = FALSE--------------------------------------------------------
+#  # Load some package data — the taxonomy and a flagged example dataset
+#    # Download the full beesTaxonomy file
+#  taxonomyFile <- BeeBDC::beesTaxonomy()
+
+## ----2.0secret, collapse = TRUE, eval = TRUE----------------------------------
+  # load in the small test dataset in the background
+system.file("extdata", "testTaxonomy.rda", package="BeeBDC") |>
+  load()
+  # Rename the file
+taxonomyFile <- testTaxonomy
+rm(testTaxonomy)
+
+## ----2.0ii--------------------------------------------------------------------
   # Load the example beesFlagged dataset
 beesFlagged <- BeeBDC::beesFlagged
 
-selectedGenera <- beesTaxonomy %>%
+selectedGenera <- taxonomyFile %>%
     # Select only tribe anthophorini (for example)
   dplyr::filter(tolower(tribe) == tolower("anthophorini")) %>%
   distinct(genus)

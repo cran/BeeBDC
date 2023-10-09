@@ -21,7 +21,8 @@
 #' @param mc.cores Numeric. If > 1, the function will run in parallel
 #' using mclapply using the number of cores specified. If = 1 then it will be run using a serial
 #' loop. NOTE: Windows machines must use a value of 1 (see ?parallel::mclapply). Additionally,
-#' be aware that each thread can use large chunks of memory.
+#' be aware that each thread can use large chunks of memory. If the cores throw issues, consider
+#' setting mc.cores to 1.
 #'  Default = 1.
 #'
 #' @return The input data with a new column, .countryOutlier. There are three possible values for 
@@ -86,7 +87,9 @@ countryOutlieRs <- function(
   ##### 1.1 data ####
     # Drop .countryOutlier if its already present
   data <- data %>%
-    dplyr::select(!tidyselect::any_of(".countryOutlier"))
+    dplyr::select(!tidyselect::any_of(".countryOutlier")) %>%
+      # Remove other columns made by this function
+    dplyr::select(!tidyselect::starts_with(c("iso_a3", "countryMatch")))
 
   ##### 1.2 rNaturalEarth ####
 # Download world map using rnaturalearth packages
@@ -154,7 +157,12 @@ jbd_intersection <- function(inData){
 # Hijack st_intersection to allow it to be run in parallel
 jbd_bufferedIntersection <- function(inData){
   suppressWarnings({ suppressMessages({
-    inData <- inData %>% tidyr::drop_na(decimalLongitude, decimalLatitude)
+    inData <- inData %>% 
+        # Use only complete lat and lon data
+      tidyr::drop_na(decimalLongitude, decimalLatitude) %>%
+        # Remove the previous column names from jbd_intersection
+      dplyr::select(!tidyselect::any_of(c("iso_a2","iso_a3","name","name_long","continent",
+                                          "indexMatch")))
   # Turn inData into a simple point feature
   points <- sf::st_as_sf(inData,
                          coords = c("decimalLongitude", "decimalLatitude"),
@@ -182,7 +190,8 @@ jbd_bufferedIntersection <- function(inData){
     dplyr::left_join(simplePoly,
                      by = "indexMatch") %>%
     # Add in the database_id
-    dplyr::bind_cols(inData %>% sf::st_drop_geometry() %>% dplyr::select(!continent))
+    dplyr::bind_cols(inData %>% sf::st_drop_geometry() %>% 
+                       dplyr::select(!tidyselect::any_of("continent")))
   })  })
   # Return the points
   return(points_extract)
@@ -193,7 +202,9 @@ jbd_bufferedIntersection <- function(inData){
 ##### 2.2 Extraction ####
 ###### a. exactCountry ####
 writeLines(" - Extracting country data from points...")
-points_extract = data %>%
+points_extract <- data %>%
+  # remove the existing iso_a3 column 
+  dplyr::select(!tidyselect::any_of("iso_a3")) %>%
   # Make a new column with the ordering of rows
   dplyr::mutate(BeeBDC_order = dplyr::row_number()) %>%
   # Group by the row number and step size
@@ -205,7 +216,9 @@ points_extract = data %>%
                      mc.cores = mc.cores
   ) %>%
   # Combine the lists of tibbles
-  dplyr::bind_rows() 
+  dplyr::bind_rows() %>%
+    # Drop those occurrences that did not intersect with a country
+  tidyr::drop_na(iso_a3)
 
   
   if(!is.null(pointBuffer)){
@@ -215,7 +228,7 @@ points_extract = data %>%
   
   writeLines(" - Buffering failed points by pointBuffer...")
   
-  points_failed = points_failed %>%
+  points_failed <- points_failed %>%
     # Make a new column with the ordering of rows
     dplyr::mutate(BeeBDC_order = dplyr::row_number()) %>%
     # Group by the row number and step size
@@ -227,9 +240,11 @@ points_extract = data %>%
                        mc.cores = mc.cores
     ) %>%
     # Combine the lists of tibbles
-    dplyr::bind_rows() 
+    dplyr::bind_rows() %>%
+    # Drop those occurrences that did not intersect with a country
+    tidyr::drop_na(iso_a3)
   
-  if(nrow(points_failed > 0)){
+  if(nrow(points_failed) > 0){
   # Re-merge good with failed
   points_extract <- points_extract %>%
     sf::st_drop_geometry() %>%
@@ -440,20 +455,6 @@ points_extract = data %>%
       dplyr::distinct(database_id, .keep_all = TRUE)
     }
   
-  writeLines(paste0(
-    " - Finished. \n",
-    "We have matched ", 
-    format(sum(bpoints_match$countryMatch == "exact", na.rm = TRUE), big.mark = ","),
-    " records to their exact country and ", 
-    format(sum(bpoints_match$countryMatch == "neighbour", na.rm = TRUE), big.mark = ","), 
-    " to an adjacent country\n", 
-    "We failed to match ",
-    format(sum(bpoints_match$countryMatch == "noMatch", na.rm = TRUE), big.mark = ","), 
-    " occurrences to any 'exact' or 'neighbouring' country.\n",
-    "There are ",
-    format(sum(is.na(bpoints_match$countryMatch)), big.mark = ","), 
-    " 'NA' occurrences for this column.\n"
-  ))
   
       # Merge with original dataset
     output <- data %>%
@@ -462,6 +463,23 @@ points_extract = data %>%
         # Add in .sea usign the seaPoints
       dplyr::mutate(.sea = dplyr::if_else(database_id %in% seaPoints$database_id,
                                           FALSE, TRUE))
+    
+    
+    writeLines(paste0(
+      " - Finished. \n",
+      "We have matched ", 
+      format(sum(bpoints_match$countryMatch == "exact", na.rm = TRUE), big.mark = ","),
+      " records to their exact country and ", 
+      format(sum(bpoints_match$countryMatch == "neighbour", na.rm = TRUE), big.mark = ","), 
+      " to an adjacent country\n", 
+      "We failed to match ",
+      format(sum(bpoints_match$countryMatch == "noMatch", na.rm = TRUE), big.mark = ","), 
+      " occurrences to any 'exact' or 'neighbouring' country.\n",
+      "There are ",
+      format(sum(is.na(output$.countryOutlier)), big.mark = ","), 
+      " 'NA' occurrences for the .countryOutlier column.\n"
+    ))
+    
 
     
     # return message
