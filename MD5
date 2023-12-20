@@ -1,6 +1,6 @@
-5336bc7a19bebb1736af25072cb2220f *DESCRIPTION
+65776ff2b0137757cd448cce408497ab *DESCRIPTION
 89b140892edb947d63487ba1a8daa63b *NAMESPACE
-cfd545b560ebba65f2ff4e8e6a5185a0 *NEWS.md
+5cd86718c16cf99f83c2fc6fe81f62b1 *NEWS.md
 f60f7f1736f5fbe067085c17892cc7ff *R/BeeBDCQuery.R
 a253e356fa34e06aa559bffeeca19453 *R/ColTypeR.R
 48d6c11d2701244d00751014c2e42f42 *R/FlagManager.R
@@ -43,7 +43,7 @@ d284fbfb1450587c16dad2b76648ec14 *R/jbd_CfC_chunker.R
 1c8673032d5b99b50ae4fe7574ba2bdb *R/jbd_coordCountryInconsistent.R
 544c34be252f901bc1017314cd84cb76 *R/jbd_coordinates_precision.R
 e135b87b2c1d76666d1998c2a0df1034 *R/jbd_coordinates_transposed.R
-e6fb10b99d453e883b63347701a0bd7c *R/jbd_correct_coordinates.R
+516b39178cc27a17e65a3183bf4e54e2 *R/jbd_correct_coordinates.R
 b97189f2faf037ad1606589e8e74465d *R/jbd_create_dir.R
 ea608e6199cf4223f74b4a1b40f14cb0 *R/jbd_create_figures.R
 e0fb0d82b0f86cd59bd1e03aad018413 *R/jbd_get_world_map.R
@@ -67,10 +67,10 @@ e081afabd338a4c19e10f9f2a2e2445e *data/beesFlagged.rda
 e301aa5212b23af5a44c7e7659eb96c0 *data/beesRaw.rda
 a2643f5578c2ccf1266bb0e92f61a1bf *inst/BeeBDC_basicWorkflow.R
 b5763266533344b5d2d493554451db80 *inst/BeeBDC_fullWorkflow.R
-eb37530d9f0357d8ed1dcd4782d73b51 *inst/CITATION
+33cf112fc5dff60f8d9651ed6b4e398c *inst/CITATION
 7a79bbbd3d326b0b8aac5386f5e4a476 *inst/doc/BeeBDC_main.R
-3a8e4b51dc329a2fa35a8bcd39d73b37 *inst/doc/BeeBDC_main.Rmd
-f6ba2795cb15ed0bc4cee40af2a77231 *inst/doc/BeeBDC_main.html
+1a75a63ee9488df0f7b98cd8b58feba1 *inst/doc/BeeBDC_main.Rmd
+0a0cd46eeab8991104390b22fd042164 *inst/doc/BeeBDC_main.html
 8ca45747d1e1e669f5083787a02c0a1e *inst/doc/basic_workflow.R
 dd469c6eb506f979561b7d1dcf515935 *inst/doc/basic_workflow.Rmd
 15ef9551aa3e0cd7e1fdcb42a4674c50 *inst/doc/basic_workflow.html
@@ -156,5 +156,5 @@ f298c736450fee8ca8729e399e1ea66a *tests/testthat/test-jbd_create_figures.R
 88b93371ea6f0aaf5411cf9e69e47747 *tests/testthat/test-repoFinder.R
 4a6258542d4aba0a9a5c4a940a955f95 *tests/testthat/test-summaryFun.R
 4b8db1f6658fd2098ee83d111d17645a *tests/testthat/test-summaryMaps.R
-3a8e4b51dc329a2fa35a8bcd39d73b37 *vignettes/BeeBDC_main.Rmd
+1a75a63ee9488df0f7b98cd8b58feba1 *vignettes/BeeBDC_main.Rmd
 dd469c6eb506f979561b7d1dcf515935 *vignettes/basic_workflow.Rmd
