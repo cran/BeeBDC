@@ -1,4 +1,15 @@
-# Changes in BeeBDC version 1.0.2
+# Changes in BeeBDC version 1.0.4
+
+- Suggestions by Elsa Youngsteadt (North Carolina State University) to allow functionality in harmoniseR to search for name matches in the verbatimScientificName column. This functionality has been optionally added with the checkVerbatim argument (default = FALSE) whereby if TRUE the function will make all checks on the normal name columns and then, *only for those rows that failed*, it will check the verbatimScientificName column for matches. 
+
+- Exception found by Elsa Youngsteadt where repoMerge and attr_builder would fail to complete when multiple families were included in a single GBIF, iDigBio, or SCAN download. This has been updated whereby these functions can now work together in order to identify a multi-family download and label the dataSource column accordingly. This will also be reflected in the metadata and EML data to show the different sources, while maintaining the metadata for each download (doi, link, ...).
+
+- Minor exception found by Elsa Youngsteadt where some synonyms would fail to be matched due to double brackets (e.g., "Lasioglossum (leucocomum) (Lovell)"). This has been fixed by letting harmoniseR stringr::str_replace instead of stringr::str_replace_all when finding matches without subgenus. Additionally, harmoniseR now ignores "non-ambiguous..." flags as these are more notes than actual issues.
+
+- Update to rnaturalearthdata 1.0.0 breaks BeeBDC::countryOutliers. This function now uses the column "iso_a3_eh" instead of "iso_a3". Thanks to @PMassicotte for identifying the issue and the solution.
+
+
+# Changes in BeeBDC version 1.0.3
 
 - Minor update to jbd_correct_coordinates to maintain functionality with sf version 1.0-15.
 
