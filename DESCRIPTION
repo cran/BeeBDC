@@ -1,6 +1,6 @@
 Package: BeeBDC
 Title: Occurrence Data Cleaning
-Version: 1.0.4
+Version: 1.1.0
 Authors@R: c(
     person("James B.", "Dorey", , "jbdorey@me.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2721-3842")),
@@ -31,8 +31,8 @@ Suggests: bdc, BiocManager, classInt, ComplexHeatmap, countrycode,
         devtools, emld, formatR, galah, hexbin, htmltools, htmlwidgets,
         httr, janitor, knitr, leaflet, magrittr, pkgdown, plotly,
         prettydoc, purrr, R.utils, renv, rgnparser, rlang, rmarkdown,
-        rmdformats, rnaturalearthdata, rvest, terra, testthat, tidyr,
-        utils, xml2
+        rmdformats, rnaturalearthdata, rvest, taxadb, terra, testthat,
+        tidyr, utils, xml2
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -41,7 +41,7 @@ LazyData: TRUE
 LazyDataCompression: xz
 RoxygenNote: 7.3.1
 NeedsCompilation: no
-Packaged: 2024-02-13 23:21:37 UTC; jamesdorey
+Packaged: 2024-03-20 22:55:01 UTC; jamesdorey
 Author: James B. Dorey [aut, cre, cph]
     (<https://orcid.org/0000-0003-2721-3842>),
   Robert L. O'Reilly [aut] (<https://orcid.org/0000-0001-5291-7396>),
@@ -49,4 +49,4 @@ Author: James B. Dorey [aut, cre, cph]
   Erica E. Fischer [aut] (<https://orcid.org/0000-0002-8202-158X>)
 Maintainer: James B. Dorey <jbdorey@me.com>
 Repository: CRAN
-Date/Publication: 2024-02-14 04:42:08 UTC
+Date/Publication: 2024-03-20 23:40:05 UTC

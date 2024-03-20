@@ -65,6 +65,10 @@
 #' @importFrom stats complete.cases setNames
 #' @importFrom dplyr n_groups lst desc %>%
 #' 
+#' @seealso [BeeBDC::chordDiagramR()] for creating a chord diagram to visualise linkages between
+#' dataSources and [BeeBDC::dupePlotR()] to visualise the numbers and proportions of duplicates in
+#' each dataSource.
+#' 
 #' @export
 #'
 #' @examples
@@ -593,7 +597,7 @@ dupeSummary <- function(
     clusteredDuplicates <- runningDuplicates %>% 
       dplyr::select(database_id_match, database_id) %>% 
       igraph::graph.data.frame() %>%
-      igraph::clusters()
+      igraph::components()
       # Extract the id and the group only
     clusteredDuplicates <- clusteredDuplicates$membership %>% as.data.frame() %>%
       setNames("group") %>%

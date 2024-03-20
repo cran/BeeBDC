@@ -582,7 +582,7 @@ Data with GPS coordinates (missing accidentally from records on Dryad) from Ball
 
 ###### m. Palouse Lic
 
-Elinor Lichtenberg’s canola data, which go with a manuscript currently under review. preprint: Lichtenberg, E. M., Milosavljević, I., Campbell, A. J. & Crowder, D. W. Differential effects of soil conservation practices on arthropods and crop yield. *bioRxiv*, (2022) <https://www.biorxiv.org/content/10.1101/2021.12.06.471474v2>. These are the data I will be putting on SCAN. - Elinor Lichtenberg
+Elinor Lichtenberg’s canola data: Lichtenberg, E. M., Milosavljević, I., Campbell, A. J. & Crowder, D. W. Differential effects of soil conservation practices on arthropods and crop yields. *Journal of Applied Entomology*, (2023) <https://doi.org/10.1111/jen.13188>. These are the data I will be putting on SCAN. - Elinor Lichtenberg
  
     Lic_Data <- BeeBDC::readr_BeeBDC(dataset = "Lic",
                                    path = paste0(DataPath, "/Additional_Datasets"),
@@ -737,6 +737,7 @@ Read data back in if needed. OutPath_Intermediate (and a few other directories) 
       db_standardized <- readr::read_csv(paste(OutPath_Intermediate, "00_prefilter_database.csv",
                                         sep = "/"), col_types = BeeBDC::ColTypeR())}
 
+Normally, you would use the full dataset, as read in above. But, for the sake of this vignette, we will use a combination of two example datasets. These example datasets can further be very useful for testing functions if you're ever feeling a bit confused and overwhelmed! 
 
 ```{r 3.0, collapse = TRUE}
 data("bees3sp", package = "BeeBDC")
@@ -1203,6 +1204,21 @@ system.file("extdata", "testTaxonomy.rda", package="BeeBDC") |>
 taxonomyFile <- testTaxonomy
 rm(testTaxonomy)
 ```
+
+<div class="alert alert-info">
+  <strong> Attention:</strong> <br>
+As of version 1.1.0, BeeBDC now has a new function that can download taxonomies using the taxadb package and transform them into the BeeBDC format. The function, `BeeBDC::taxadbToBeeBDC()`, allows the user to choose their desired provider (e.g., "gbif", "itis"...), version, taxon name and rank, and to save the taxonomy as a readable csv or not. For example for the bee genus Apis:
+
+    ApisTaxonomy <- BeeBDC::taxadbToBeeBDC(
+      name = "Apis",
+      rank = "Genus",
+      provider = "gbif",
+      version = "22.12",
+      outPath = getwd(),
+      fileName = "ApisTaxonomy.csv"
+      )
+
+</div>
 
 Harmonise the names in the occurrence tibble. This flags the occurrences without a matched name and matches names to their correct name according to [Discover Life](https://www.discoverlife.org). You can also use multiple cores to achieve this. See '?`harmoniseR()`' for details.
 
