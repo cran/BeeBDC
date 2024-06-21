@@ -592,17 +592,28 @@ check_space <- BeeBDC::coordUncerFlagR(data = check_space,
 #  checklistFile <- BeeBDC::beesChecklist()
 
 ## ----5.5secret, collapse = TRUE, eval = TRUE----------------------------------
-  # load in the small test dataset i nthe background
+  # load in the small test dataset in the background
 system.file("extdata", "testChecklist.rda", package="BeeBDC") |>
   load()
   # Rename the file
 taxonomyFile <- testChecklist
 rm(testChecklist)
 
-## ----5.5ii, collapse = TRUE---------------------------------------------------
+## ----5.5iia, collapse = TRUE--------------------------------------------------
 check_space <- BeeBDC::countryOutlieRs(checklist = checklistFile,
                         data = check_space,
                         keepAdjacentCountry = TRUE,
+                        pointBuffer = 0.05,
+                          # Scale of map to return, one of 110, 50, 10 OR 'small', 'medium', 'large'
+                          # Smaller numbers will result in much longer calculation times. 
+                          # We have not attempted a scale of 10.
+                        scale = 50,
+                        mc.cores = 1)
+
+## ----5.5iib, collapse = TRUE--------------------------------------------------
+check_space <- BeeBDC::continentOutlieRs(checklist = checklistFile,
+                        data = check_space,
+                        keepAdjacentContinent = FALSE,
                         pointBuffer = 0.05,
                           # Scale of map to return, one of 110, 50, 10 OR 'small', 'medium', 'large'
                           # Smaller numbers will result in much longer calculation times. 

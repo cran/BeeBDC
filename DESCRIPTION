@@ -1,6 +1,6 @@
 Package: BeeBDC
 Title: Occurrence Data Cleaning
-Version: 1.1.1
+Version: 1.2.0
 Authors@R: c(
     person("James B.", "Dorey", , "jbdorey@me.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2721-3842")),
@@ -22,6 +22,8 @@ Description: Flags and checks occurrence data that are in Darwin Core
     - Dorey et al. (2023) <doi:10.1101/2023.06.30.547152> and package
     website - Dorey et al. (2023) <https://github.com/jbdorey/BeeBDC>.
 License: GPL (>= 3)
+URL: https://jbdorey.github.io/BeeBDC/
+        https://github.com/jbdorey/BeeBDC
 BugReports: https://github.com/jbdorey/BeeBDC/issues
 Depends: R (>= 2.10)
 Imports: circlize, CoordinateCleaner, cowplot, dplyr, forcats, ggplot2,
@@ -41,7 +43,7 @@ LazyData: TRUE
 LazyDataCompression: xz
 RoxygenNote: 7.3.1
 NeedsCompilation: no
-Packaged: 2024-04-03 04:16:04 UTC; jamesdorey
+Packaged: 2024-06-20 01:31:34 UTC; jamesdorey
 Author: James B. Dorey [aut, cre, cph]
     (<https://orcid.org/0000-0003-2721-3842>),
   Robert L. O'Reilly [aut] (<https://orcid.org/0000-0001-5291-7396>),
@@ -49,4 +51,4 @@ Author: James B. Dorey [aut, cre, cph]
   Erica E. Fischer [aut] (<https://orcid.org/0000-0002-8202-158X>)
 Maintainer: James B. Dorey <jbdorey@me.com>
 Repository: CRAN
-Date/Publication: 2024-04-03 23:53:03 UTC
+Date/Publication: 2024-06-21 10:10:07 UTC

@@ -229,6 +229,10 @@ coordinates.
 - `countryOutlieRs()` This function flags country-level outliers using
   the checklist provided with this package. For additional context and
   column names, see `beesChecklist`.
+- `continentOutlieRs()` This function flags continent-level outliers
+  using the checklist provided with this package. This function works
+  much the same as `countryOutlieRs()`, but at a lower resolution. For
+  additional context and column names, see `beesChecklist`.
 - `jbd_create_figures()` Creates figures (i.e., bar plots, maps, and
   histograms) reporting the results of data quality tests implemented
   the bdc and BeeBDC packages. Works like `bdc::bdc_create_figures()`,
@@ -382,12 +386,12 @@ explanation on each module.
 
 - **Package citation:** Dorey, J. B., O’Reilly, R. L., Bossert, S. &
   Fischer, E. (2023). BeeBDC: an occurrence data cleaning package. R
-  package version 1.1.1. url: <https://github.com/jbdorey/BeeBDC>
+  package version 1.2.0. url: <https://github.com/jbdorey/BeeBDC>
 
 - **Discover Life citation (for use of bee taxonomy and checklist):**
   Ascher, J.S. & Pickering, J. (2020) Discover Life bee species guide
   and world checklist (Hymenoptera: Apoidea: Anthophila).
-  <http://www.discoverlife.org/mp/20q?guide=Apoidea_species>
+  <https://www.discoverlife.org/mp/20q?guide=Apoidea_species>
 
 This package and its data sets were created with the support, and as a
 part, of the iDigBees project
