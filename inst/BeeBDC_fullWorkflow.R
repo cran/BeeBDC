@@ -18,7 +18,7 @@ renv::activate(project = paste0(RootPath,"/Data_acquisition_workflow"))
 
 
 # Install BeeBDC from CRAN
-install.packages("BeeBDC")
+utils::install.packages("BeeBDC")
 # You could also install BeeBDC's development version using the below: 
 # WARNING the development version may not pass all CRAN or GitHub tests.
      remotes::install_github("https://github.com/jbdorey/BeeBDC.git", user="jbdorey", 
@@ -580,7 +580,11 @@ check_pf <- bdc::bdc_country_standardized(
     # run before)
   data = check_pf %>% dplyr::select(!tidyselect::any_of(c("countryCode", "country_suggested"))),
   country = "country"
-) 
+) %>%
+    # Sometimes when "MX" is the country, "Mexico" is not correctly assigned
+  dplyr::mutate(country_suggested = dplyr::if_else(country == "MX",
+                                                   "Mexico",
+                                                   country_suggested))
 
 ##### 3.7 TranspCoords ####
   # Flag and correct records when lat and long appear to be transposed. We have chunked 
@@ -1301,7 +1305,6 @@ cleanData %>%
 ##### 9.1 Duplicate chordDiagrams ####
 # install ComplexHeatmap if needed
 if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
 BiocManager::install("ComplexHeatmap")
 
 # Read in the most-RECENT duplicates file.

@@ -406,8 +406,8 @@ rm(parse_names)
 ## ----4.2, collapse = TRUE, eval = FALSE---------------------------------------
 #  taxonomyFile <- BeeBDC::beesTaxonomy()
 
-## ----4.2secret, collapse = TRUE, eval = TRUE----------------------------------
-  # load in the small test dataset i nthe background
+## ----4.2secret, collapse=TRUE, include=FALSE----------------------------------
+  # load in the small test dataset in the background
 system.file("extdata", "testTaxonomy.rda", package="BeeBDC") |>
   load()
   # Rename the file
