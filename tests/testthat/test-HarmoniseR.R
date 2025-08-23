@@ -22,10 +22,10 @@ testOut <- harmoniseR(
 
 # Test the expected results
 testthat::test_that("harmoniseR results unsuccessfuly matched", {
-  testthat::expect_equal(sum(testOut$.invalidName == FALSE), 9)
+  testthat::expect_equal(sum(testOut$.invalidName == FALSE), 4)
 })
 testthat::test_that("harmoniseR results successfuly matched", {
-  testthat::expect_equal(sum(testOut$.invalidName == TRUE), 91)
+  testthat::expect_equal(sum(testOut$.invalidName == TRUE), 96)
 })
 
 
@@ -63,10 +63,10 @@ testOut <- harmoniseR(
 
 # Test the expected results
 testthat::test_that("harmoniseR results unsuccessfuly matched", {
-  testthat::expect_equal(sum(testOut$.invalidName == FALSE), 9)
+  testthat::expect_equal(sum(testOut$.invalidName == FALSE), 4)
 })
 testthat::test_that("harmoniseR results successfuly matched", {
-  testthat::expect_equal(sum(testOut$.invalidName == TRUE), 93)
+  testthat::expect_equal(sum(testOut$.invalidName == TRUE), 98)
 })
 
 

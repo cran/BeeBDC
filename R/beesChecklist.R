@@ -12,7 +12,7 @@
 #' alternatively download the dataset from the URL below and then read it in using 
 #' `base::readRDS("filePath.Rda")`.
 #'  
-#' @seealso [BeeBDC::beesTaxonomy()] for further context. 
+#'  See [BeeBDC::beesTaxonomy()] for further context. 
 #'
 #' @param URL A character vector to the FigShare location of the dataset. The default will be to
 #' the most-recent version.
@@ -28,17 +28,15 @@
 #'  
 #'  **DiscoverLife_name** The full country name as it occurs on Discover Life.
 #'  
-#'  **rNaturalEarth_name** Country name from rnaturalearth's name_long and type = "map_units".
+#'  **rNaturalEarth_name** Country name from rnaturalearth's name_long.
 #'  
 #'  **shortName** A short version of the country name.
-#'  
-#'  **continent** The continent where that country is found.
 #'  
 #'  **DiscoverLife_ISO** The ISO country name as it occurs on Discover Life.
 #'  
 #'  **Alpha-2** Alpha-2 from rnaturalearth.
 #'  
-#'  **iso_a3_eh** iso_a3_eh from rnaturalearth.
+#'  **Alpha-3** Alpha-3 from rnaturalearth.
 #'  
 #'  **official** Official country name = "yes" or only a Discover Life name = "no".
 #'  
@@ -71,9 +69,9 @@
 #' 
 #' @references This dataset was created using the Discover Life checklist and taxonomy. 
 #' Dataset is from the publication: 
-#' Dorey, J.B., Fischer, E.E., Chesshire, P.R., Nava-Bolaños, A., O’Reilly, R.L., Bossert, S., Collins, S.M., Lichtenberg, E.M., Tucker, E., Smith-Pardo, A., Falcon-Brindis, A., Guevara, D.A., Ribeiro, B.R., de Pedro, D., Hung, J.K.-L., Parys, K.A., McCabe, L.M., Rogan, M.S., Minckley, R.L., Velzco, S.J.E., Griswold, T., Zarrillo, T.A., Jetz, W., Sica, Y.V., Orr, M.C., Guzman, L.M., Ascher, J., Hughes, A.C. & Cobb, N.S. (2023) A globally synthesised and flagged bee occurrence dataset and cleaning workflow. Scientific Data, 10, 1–17. https://www.doi.org/10.1038/S41597-023-02626-W
+#' DOREY, J. B., CHESSHIRE, P. R., BOLAÑOS, A. N., O’REILLY, R. L., BOSSERT, S., COLLINS, S. M., LICHTENBERG, E. M., TUCKER, E., SMITH-PARDO, A., FALCON-BRINDIS, A., GUEVARA, D. A., RIBEIRO, B. R., DE PEDRO, D., FISCHER, E., HUNG, J. K.-L., PARYS, K. A., ROGAN, M. S., MINCKLEY, R. L., VELZCO, S. J. E., GRISWOLD, T., ZARRILLO, T. A., SICA, Y., ORR, M. C., GUZMAN, L. M., ASCHER, J., HUGHES, A. C. & COBB, N. S. In review. A globally synthesised and flagged bee occurrence dataset and cleaning workflow. Scientific Data.
 #' The checklist data are mostly compiled from Discover Life data, www.discoverlife.org:
-#' Ascher, J.S. & Pickering, J. (2020) Discover Life bee species guide and world checklist (Hymenoptera: Apoidea: Anthophila). http://www.discoverlife.org/mp/20q?guide=Apoidea_species
+#' ASCHER, J. S. & PICKERING, J. 2020. Discover Life bee species guide and world checklist (Hymenoptera: Apoidea: Anthophila). http://www.discoverlife.org/mp/20q?guide=Apoidea_species.
 #' 
 #' @export
 #' 
@@ -81,7 +79,7 @@
 #'\dontrun{
 #' beesChecklist <- BeeBDC::beesChecklist()
 #'}
-beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/47092720",
+beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/42320598?private_link=bce1f92848c2ced313ee",
                           ...){
   destfile <- checklist <- attempt <- nAttempts <- error_funcFile <- error_func <- NULL
   

@@ -10,7 +10,7 @@
 #' However, it will only send the download to your email and you must do the rest yourself at this point.
 #' 
 #' @param path A character directory. The path to a folder where the download will be stored.
-#' @param userEmail A character string. The email used associated with the user's ALA account; 
+#' @param userEmail A character string. The email used associated with the user’s ALA account; 
 #' user must make an ALA account to download data. 
 #' @param ALA_taxon A character string. The taxon to download from ALA. Uses [galah::galah_identify()]
 #' @param DL_reason Numeric. The reason for data download according to [galah::galah_config()]
@@ -105,8 +105,7 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
                   "/galah_download_folder", 
                   sep = ""),
     overwrite = TRUE) 
-  
-  browser()
+
   
   #### Save data ####
   # Save some download information
@@ -126,5 +125,7 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
   # Write user instructions
   writeLines(paste("4.","\n"," - Fin.",
                    sep = ""))
+  
+  return(ALA_Occurence_download)
 }
 ##### Current end ALA ####

@@ -86,6 +86,7 @@ jbd_create_figures <-
       check_require_cran("cowplot")
       check_require_cran("readr")
       check_require_cran("ggspatial")
+      #check_require_cran("hexbin")
       requireNamespace("bdc")
     })
     

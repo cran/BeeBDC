@@ -35,6 +35,7 @@
 #' @param db a connection to the taxadb database. See details of `taxadb::filter_rank()`. Default 
 #' = Null which should work. 
 #' As defined by `taxadb::filter_rank()`.
+#' @param ... Arguments passed to `taxadb::td_create()`.
 #' 
 #' @param removeEmptyNames Logical. If True (default), it will remove entries without an entry
 #' for specificEpithet.
@@ -62,7 +63,8 @@
 #'   version = "22.12",
 #'   removeEmptyNames = TRUE,
 #'   outPath = getwd(),
-#'   fileName = NULL
+#'   fileName = NULL,
+#'   ...
 #'   )
 #'   }
 #' 
@@ -77,7 +79,8 @@ taxadbToBeeBDC <- function(
     db = NULL,
     removeEmptyNames = TRUE,
     outPath = getwd(),
-    fileName = NULL
+    fileName = NULL,
+    ...
 ) {  
   # locally bind variables to the function
   . <- taxonomy_taxadb <- taxonomyOut <- canonical <- authorship <- taxonomic_status <- species <-
@@ -115,47 +118,6 @@ taxadbToBeeBDC <- function(
     stop(provider, " provided is not a valid name")
   }
   
-  
-  ##### 0.2 taxadb test ####
-  ###### a. test ####
-  # Check if taxadb is installed
-  # TRUE if taxadb is found
-  suppressWarnings(
-    suggestedTest <- system.file(package='taxadb') %>% 
-      stringr::str_count() > 0 
-  )
-
-  ###### b. taxadb ####
-  if(suggestedTest == FALSE){
-    # Set up instructions for download on fail
-    instructions <- paste(" Please try installing the package for yourself", 
-                          "using the following command: \n",
-                          "install.packages(\"taxadb\")")
-    # Set up fail function for tryCatch
-    error_func <- function(e){
-      stop(paste("Failed to install the taxadb package.\n", 
-                 instructions))
-    }
-    # Begin interactive input
-    input <- 1
-    if (interactive()){
-      input <- utils::menu(c("Yes", "No"), 
-                           title = paste0("Install the taxadb package? \n"))
-    }
-    if(input == 1){
-      # Start taxadb install
-      message("Installing the taxadb package.")
-      tryCatch(
-        utils::install.packages("taxadb"), 
-        error = error_func, warning = error_func)
-    } # END input == 1
-    
-    else{
-      stop(writeLines(paste("The taxadb package is necessary for BeeBDC::taxadbToBeeBDC.\n", 
-                            instructions)))
-    } # END else
-  } # END suggestedTest == FALSE
-  
 
 #### 1.0 Download taxonomy ####
   ##### 1.1 Download ####
@@ -165,7 +127,8 @@ taxadbToBeeBDC <- function(
                     version = version,
                     # Only provide inputs here if user-inputs are provided.
                     if(is.null(db)){db = taxadb::td_connect()
-                    }else{db = db})
+                    }else{db = db},
+                    ...)
     # User output
   writeLines(paste0(" - taxadb save the taxonomy to: ",
                     taxadb::taxadb_dir()))

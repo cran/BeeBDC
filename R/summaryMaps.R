@@ -17,8 +17,8 @@
 #' @param outPath A character vector the path to the save location for the output figure.
 #' @param fileName A character vector with file name 
 #' for the output figure, ending with '.pdf'.
-#' @param width Numeric. The width, in inches, of the resulting figure. Default = 5.
-#' @param height Numeric. The height, in inches, of the resulting figure. Default = 10.
+#' @param width Numeric. The width, in inches, of the resulting figure. Default = 10.
+#' @param height Numeric. The height, in inches, of the resulting figure. Default = 5.
 #' @param dpi Numeric. The resolution of the resulting plot. Default = 300.
 #' @param returnPlot Logical. If TRUE, return the plot to the environment. Default = FALSE.
 #' @param scale Numeric or character. Passed to rnaturalearth's ne_countries().
@@ -38,7 +38,6 @@
 #' @importFrom ggplot2 xlab ylab ggtitle
 #'
 #' @examples
-#' if(requireNamespace("rnaturalearthdata")){
 #' # Read in data
 #' data(beesFlagged)
 #' OutPath_Figures <- tempdir()
@@ -52,7 +51,7 @@
 #' outPath = OutPath_Figures,
 #' fileName = paste0("CountryMaps_fisher_TEST.pdf"),
 #' )
-#' } # END if require
+#' 
 #' 
 summaryMaps <- function(
     data = NULL,
@@ -60,8 +59,8 @@ summaryMaps <- function(
     class_Style = "fisher",
     outPath = NULL,
     fileName = NULL,
-    width = 5, 
-    height = 10,
+    width = 10, 
+    height = 5,
     dpi = 300,
     returnPlot = FALSE,
     scale = 110,
@@ -144,7 +143,7 @@ summaryMaps <- function(
   # If first element is full, unlist each one
   extracted <- extracted %>%
     dplyr::mutate(indexMatch = indexMatch %>% as.character() %>%
-                      # deal with problems - Take the first number where two are provided
+                      # deal with problems — Take the first number where two are provided
                     stringr::str_extract("[0-9]+") %>% 
                       # Remove zero to NA
                     stringr::str_replace("^[0]$", NA_character_) %>%
@@ -185,7 +184,7 @@ rm(extracted)
   # If first element is full, unlist each one
   extracted2 <- extracted2 %>%
     dplyr::mutate(indexMatch = indexMatch %>% as.character() %>%
-                    # deal with problems - Take the first number where two are provided
+                    # deal with problems — Take the first number where two are provided
                     stringr::str_extract("[0-9]+") %>% 
                     # Remove zero to NA
                     stringr::str_replace("^[0]$", NA_character_) %>%
@@ -231,7 +230,7 @@ rm(extracted2)
   classes <- classInt::classIntervals(spMapData$count, n = class_n, 
                                       style = class_Style, dig.lab=20,
                                       dataPrecision=0)
-  # Next we'll create a new column in our sf object using the base R cut() function to cut up our 
+  # Next we’ll create a new column in our sf object using the base R cut() function to cut up our 
   # percent variable into distinct groups:
   spMapData <- spMapData %>%
     dplyr::mutate(class_count = cut(count, 
@@ -320,7 +319,7 @@ rm(extracted2)
   classes <- classInt::classIntervals(fullMap$occCount, n = class_n, 
                                       style = class_Style, dig.lab=20,
                                       dataPrecision=0)
-  # Next we'll create a new column in our sf object using the base R cut() function to cut up our 
+  # Next we’ll create a new column in our sf object using the base R cut() function to cut up our 
   # percent variable into distinct groups:
   fullMap <- fullMap %>%
     dplyr::mutate(class_count = cut(occCount, 

@@ -53,7 +53,6 @@ time. The prefix jbd_ is used to highlight the difference between this function 
 \code{\link[bdc:bdc_country_from_coordinates]{bdc::bdc_country_from_coordinates()}}.
 }
 \examples{
-if(requireNamespace("rnaturalearthdata")){
 library("dplyr")
 data(beesFlagged)
 HomePath = tempdir()
@@ -103,5 +102,4 @@ beesFlagged_out <- left_join(beesFlagged_out, countryOutput, by = "database_id")
 beesFlagged_out$country <- beesFlagged_out$country \%>\%
   stringr::str_replace(., pattern = paste("\\\\[", "\\\\]", "\\\\?",
                                           sep=  "|"), replacement = "")
-} # END if require
 }
