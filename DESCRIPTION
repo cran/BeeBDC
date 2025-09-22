@@ -1,6 +1,6 @@
 Package: BeeBDC
 Title: Occurrence Data Cleaning
-Version: 1.3.0
+Version: 1.3.1
 Authors@R: c(
     person("James B.", "Dorey", , "jbdorey@me.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2721-3842")),
@@ -30,11 +30,12 @@ Imports: circlize, CoordinateCleaner, cowplot, dplyr, forcats, ggplot2,
         ggspatial, here, igraph, lubridate, mgsub, openxlsx, paletteer,
         readr, rnaturalearth, sf, stringr, tidyselect
 Suggests: bdc, BiocManager, classInt, ComplexHeatmap, countrycode,
-        devtools, emld, formatR, galah, hexbin, htmltools, htmlwidgets,
-        httr, iNEXT, janitor, kableExtra, knitr, leaflet, magrittr,
-        pkgdown, plotly, prettydoc, purrr, R.utils, renv, rgnparser,
-        rlang, rmarkdown, rmdformats, rnaturalearthdata, rvest, SpadeR,
-        taxadb, terra, testthat, tibble, tidyr, utils, xml2
+        curl, devtools, emld, formatR, galah, hexbin, htmltools,
+        htmlwidgets, httr, iNEXT, janitor, kableExtra, knitr, leaflet,
+        magrittr, pkgdown, plotly, prettydoc, purrr, R.utils, renv,
+        rgnparser, rlang, rmarkdown, rmdformats, rnaturalearthdata,
+        rvest, SpadeR, taxadb, terra, testthat, tibble, tidyr, utils,
+        xml2
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-gb
@@ -42,7 +43,7 @@ LazyData: TRUE
 LazyDataCompression: xz
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-08-23 14:30:16 UTC; jamesdorey
+Packaged: 2025-09-22 03:43:57 UTC; jamesdorey
 Author: James B. Dorey [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0003-2721-3842>),
   Robert L. O'Reilly [aut] (ORCID:
@@ -51,4 +52,4 @@ Author: James B. Dorey [aut, cre, cph] (ORCID:
   Erica E. Fischer [aut] (ORCID: <https://orcid.org/0000-0002-8202-158X>)
 Maintainer: James B. Dorey <jbdorey@me.com>
 Repository: CRAN
-Date/Publication: 2025-08-23 14:50:02 UTC
+Date/Publication: 2025-09-22 07:00:02 UTC

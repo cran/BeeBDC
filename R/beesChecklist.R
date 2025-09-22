@@ -12,10 +12,17 @@
 #' alternatively download the dataset from the URL below and then read it in using 
 #' `base::readRDS("filePath.Rda")`.
 #'  
-#'  See [BeeBDC::beesTaxonomy()] for further context. 
+#' @seealso [BeeBDC::beesTaxonomy()] for further context. 
 #'
 #' @param URL A character vector to the FigShare location of the dataset. The default will be to
 #' the most-recent version.
+#' @param destfile a character string (or vector, see the url argument) with the file path where 
+#' the downloaded file is to be saved. Tilde-expansion is performed. If NULL (default), then destfile
+#' is set as `paste0(tempdir(), "/beesChecklist.Rda")` (normalizePath for Windows).
+#' @param method The method to be used for downloading files. Current download methods are 
+#' "internal", "libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value 
+#' "auto": see ‘Details’ and ‘Note’. The method can also be set through the option 
+#' "download.file.method": see options(). description
 #' @param ... Extra variables that can be passed to [utils::download.file()]
 #' 
 #' @return A downloaded beesChecklist.Rda file in the outPath and the same tibble returned to
@@ -28,15 +35,17 @@
 #'  
 #'  **DiscoverLife_name** The full country name as it occurs on Discover Life.
 #'  
-#'  **rNaturalEarth_name** Country name from rnaturalearth's name_long.
+#'  **rNaturalEarth_name** Country name from rnaturalearth's name_long and type = "map_units".
 #'  
 #'  **shortName** A short version of the country name.
+#'  
+#'  **continent** The continent where that country is found.
 #'  
 #'  **DiscoverLife_ISO** The ISO country name as it occurs on Discover Life.
 #'  
 #'  **Alpha-2** Alpha-2 from rnaturalearth.
 #'  
-#'  **Alpha-3** Alpha-3 from rnaturalearth.
+#'  **iso_a3_eh** iso_a3_eh from rnaturalearth.
 #'  
 #'  **official** Official country name = "yes" or only a Discover Life name = "no".
 #'  
@@ -69,9 +78,9 @@
 #' 
 #' @references This dataset was created using the Discover Life checklist and taxonomy. 
 #' Dataset is from the publication: 
-#' DOREY, J. B., CHESSHIRE, P. R., BOLAÑOS, A. N., O’REILLY, R. L., BOSSERT, S., COLLINS, S. M., LICHTENBERG, E. M., TUCKER, E., SMITH-PARDO, A., FALCON-BRINDIS, A., GUEVARA, D. A., RIBEIRO, B. R., DE PEDRO, D., FISCHER, E., HUNG, J. K.-L., PARYS, K. A., ROGAN, M. S., MINCKLEY, R. L., VELZCO, S. J. E., GRISWOLD, T., ZARRILLO, T. A., SICA, Y., ORR, M. C., GUZMAN, L. M., ASCHER, J., HUGHES, A. C. & COBB, N. S. In review. A globally synthesised and flagged bee occurrence dataset and cleaning workflow. Scientific Data.
+#' Dorey, J.B., Fischer, E.E., Chesshire, P.R., Nava-Bolaños, A., O’Reilly, R.L., Bossert, S., Collins, S.M., Lichtenberg, E.M., Tucker, E., Smith-Pardo, A., Falcon-Brindis, A., Guevara, D.A., Ribeiro, B.R., de Pedro, D., Hung, J.K.-L., Parys, K.A., McCabe, L.M., Rogan, M.S., Minckley, R.L., Velzco, S.J.E., Griswold, T., Zarrillo, T.A., Jetz, W., Sica, Y.V., Orr, M.C., Guzman, L.M., Ascher, J., Hughes, A.C. & Cobb, N.S. (2023) A globally synthesised and flagged bee occurrence dataset and cleaning workflow. Scientific Data, 10, 1–17. https://www.doi.org/10.1038/S41597-023-02626-W
 #' The checklist data are mostly compiled from Discover Life data, www.discoverlife.org:
-#' ASCHER, J. S. & PICKERING, J. 2020. Discover Life bee species guide and world checklist (Hymenoptera: Apoidea: Anthophila). http://www.discoverlife.org/mp/20q?guide=Apoidea_species.
+#' Ascher, J.S. & Pickering, J. (2020) Discover Life bee species guide and world checklist (Hymenoptera: Apoidea: Anthophila). http://www.discoverlife.org/mp/20q?guide=Apoidea_species
 #' 
 #' @export
 #' 
@@ -79,7 +88,8 @@
 #'\dontrun{
 #' beesChecklist <- BeeBDC::beesChecklist()
 #'}
-beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/42320598?private_link=bce1f92848c2ced313ee",
+beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/47092720",
+                          destfile = NULL, method = "auto",
                           ...){
   destfile <- checklist <- attempt <- nAttempts <- error_funcFile <- error_func <- NULL
   
@@ -88,10 +98,10 @@ beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/42320598
     
     # Set up the error message function
   error_func <- function(e){
-    message(paste("Download attempt failed..."))
+    message(paste("Checklist download attempt failed..."))
   }
   error_funcFile <- function(e){
-    message(paste("Could not read download..."))
+    message(paste("Could not read checklist download..."))
   }
   
     # Check operating system
@@ -109,9 +119,15 @@ beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/42320598
         
   # WINDOWS
         if(OS != "MacLinux"){
+            # Set destfile if it's not provided by user
+          if(is.null(destfile)){
+          destfile <- normalizePath(paste0(tempdir(),
+                               "/beesChecklist.Rda"))}
       # Download the file
-      tryCatch(utils::download.file(URL, destfile = normalizePath(paste0(tempdir(),
-                                                                         "/beesChecklist.Rda"))),
+      tryCatch(utils::download.file(URL, 
+                                    destfile = destfile,
+                                    method = method,
+                                    ...),
           error = error_func, warning = error_func)
       # Load the file 
         tryCatch(
@@ -119,8 +135,14 @@ beesChecklist <- function(URL = "https://figshare.com/ndownloader/files/42320598
         error = error_funcFile, warning = error_funcFile)
         }else{
   # MAC OR LINUX
+          
+          # Set destfile if it's not provided by user
+          if(is.null(destfile)){
+            destfile <- paste0(tempdir(), "/beesChecklist.Rda")}
           # Download the file
-          tryCatch(utils::download.file(URL, destfile = paste0(tempdir(), "/beesChecklist.Rda")),
+          tryCatch(utils::download.file(URL, destfile = destfile,
+                                        method = method,
+                                        ...),
                    error = error_func, warning = error_func)
           # Load the file 
           tryCatch(
