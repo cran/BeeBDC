@@ -1,21 +1,17 @@
-requireNamespace("dplyr")
-requireNamespace("BeeBDC")
 
 # If rnaturalearthdata is present, run tests
-if(requireNamespace("taxadb")){
+if(requireNamespace("taxadb", quietly = TRUE)){
 
-  requireNamespace("taxadb")
 
   # Run the taxadbToBeeBDC function using the example
- ApisTaxonomy <- BeeBDC::taxadbToBeeBDC(name = "Apis",
+ ApisTaxonomy <- taxadbToBeeBDC(name = "Apis",
                                         rank = "Genus",
                                         provider = "gbif",
-                                        version = "22.12",
+                                        version = taxadb::latest_version(),
                                         removeEmptyNames = TRUE,
                                         outPath = tempdir(),
                                         fileName = "TEST_out.csv",
-                                          # Must be NULL to avoid deprecation warning
-                                        overwrite = NULL, lines = NULL)
+                                        overwrite = TRUE)
  
 
 
@@ -35,9 +31,8 @@ testthat::test_that("taxadbToBeeBDC plot saved?", {
 
 # Check the number of columns in the dataset
 testthat::test_that("taxadbToBeeBDC expected number of columns", {
-  testthat::expect_equal(length(colnames(ApisTaxonomy)), 29)
+  testthat::expect_equal(length(colnames(ApisTaxonomy)), 33)
 })
 
 
 } # END if require
-

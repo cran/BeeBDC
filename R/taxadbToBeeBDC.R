@@ -8,7 +8,7 @@
 #' Uses the taxadb R package to download a requested taxonomy and then transforms it into the input
 #' BeeBDC format. This means that any taxonomy in their databases can be used with BeeBDC. You can
 #' also save the output to your computer and to the R environment for immediate use. See 
-#' details below for a list of providers or see `taxadb::td_create()`.
+#' details below for a list of providers or see `taxadb::td_download()`.
 #' 
 #'
 #' @param name Character. Taxonomic scientific name (e.g. "Aves"). 
@@ -17,12 +17,12 @@
 #' As defined by `taxadb::filter_rank()`.
 #' @param provider Character. From which provider should the hierarchy be returned?
 #' Default is 'gbif', which can also be configured using options(default_taxadb_provide = ...").
-#'  See `taxadb::td_create()` for a list of recognized providers. NOTE: gbif seems to have the most-complete 
+#'  See `taxadb::td_download()` for a list of recognized providers. NOTE: gbif seems to have the most-complete 
 #'  columns, especially in terms of scientificNameAuthorship, which is important for matching
 #'  ambiguous names.
 #'  As defined by `taxadb::filter_rank()`.
 #' @param version Character. Which version of the taxadb provider database should we use? defaults 
-#' to latest. See tl_import for details. Default = 22.12. 
+#' to latest. See available_versions() for details. Default = 22.12. 
 #' As defined by `taxadb::filter_rank()`.
 #' @param collect Logical. Should we return an in-memory data.frame 
 #' (default, usually the most convenient), or a reference to lazy-eval table on disk 
@@ -35,7 +35,8 @@
 #' @param db a connection to the taxadb database. See details of `taxadb::filter_rank()`. Default 
 #' = Null which should work. 
 #' As defined by `taxadb::filter_rank()`.
-#' @param ... Arguments passed to `taxadb::td_create()`.
+#' @param overwrite Logical. Should we re-download files that are already present? Default FALSE.
+#' @param ... Arguments passed to `taxadb::td_download()`.
 #' 
 #' @param removeEmptyNames Logical. If True (default), it will remove entries without an entry
 #' for specificEpithet.
@@ -67,6 +68,7 @@
 #'   removeEmptyNames = TRUE,
 #'   outPath = getwd(),
 #'   fileName = NULL,
+#'   overwrite = FALSE,
 #'   ...
 #'   )
 #'   
@@ -78,25 +80,20 @@ taxadbToBeeBDC <- function(
     name = NULL,
     rank = NULL,
     provider = "gbif",
-    version = "22.12",
+    version = taxadb::available_versions(db = taxadb::td_connect()),
     collect = TRUE,
     ignore_case = TRUE,
     db = NULL,
     removeEmptyNames = TRUE,
     outPath = getwd(),
     fileName = NULL,
+    overwrite = FALSE,
     ...
 ) {  
   # locally bind variables to the function
   . <- taxonomy_taxadb <- taxonomyOut <- canonical <- authorship <- taxonomic_status <- species <-
     taxonID <- id <- accid <- id_matched <- NULL
 
-  
-  # Load required packages 
-  requireNamespace("stringr")
-  requireNamespace("dplyr")
-  requireNamespace("taxadb")
-  
   
   #### 0.0 Prep ####
   ##### 0.1 Errors ####
@@ -117,9 +114,10 @@ taxadbToBeeBDC <- function(
                  "gbif",
                  "fb",
                  "slb",
-                 "wd",
-                 "ott",
-                 "iucn")) {
+                 #"wd",
+                 "ott"#,
+                 #"iucn"
+                 )) {
     stop(provider, " provided is not a valid name")
   }
   
@@ -152,31 +150,33 @@ taxadbToBeeBDC <- function(
     }
     if(input == 1){
       # Start taxadb install
-      message("Installing the taxadb package.")
+      bee_message("Installing the taxadb package.")
       tryCatch(
         utils::install.packages("taxadb"), 
         error = error_func, warning = error_func)
     } # END input == 1
     
     else{
-      stop(writeLines(paste("The taxadb package is necessary for BeeBDC::taxadbToBeeBDC.\n", 
+      stop(bee_message(paste("The taxadb package is necessary for BeeBDC::taxadbToBeeBDC.\n", 
                             instructions)))
     } # END else
   } # END suggestedTest == FALSE
   
 
 #### 1.0 Download taxonomy ####
-  ##### 1.1 Download ####
-  writeLines(" - Downloading taxonomy...")
+  bee_message(" - Downloading taxonomy...")
+  # Connect to the default database if none was provided
+  if(is.null(db)){
+    db <- taxadb::td_connect()
+  }
   taxadb::td_create(provider = provider,
                     schema = "dwc",
                     version = version,
-                    # Only provide inputs here if user-inputs are provided.
-                    if(is.null(db)){db = taxadb::td_connect()
-                    }else{db = db},
+                    db = db,
+                    overwrite = overwrite,
                     ...)
     # User output
-  writeLines(paste0(" - taxadb save the taxonomy to: ",
+  bee_message(paste0(" - taxadb save the taxonomy to: ",
                     taxadb::taxadb_dir()))
   
   ##### 1.2 Turn into data table ####
@@ -186,9 +186,7 @@ taxonomy_taxadb <- taxadb::filter_rank(name,
                                        provider = provider,
                                        collect = collect,
                                        ignore_case = ignore_case,
-                                        # Only provide inputs here if user-inputs are provided.
-                                       if(is.null(db)){db = taxadb::td_connect()
-                                       }else{db = db},
+                                       db = db,
                                        version = version
 ) 
   

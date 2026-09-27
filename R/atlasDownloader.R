@@ -22,7 +22,6 @@
 #' @return Completes an ALA data download and saves those data to the path provided.
 #' 
 #' @importFrom dplyr %>%
-#' @importFrom utils unzip
 #' @export
 #'
 #' @examples
@@ -37,7 +36,7 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
   . <- file_name <- NULL
   
   #### Intro checks ####
-  writeLines(paste("1.","\n",
+  bee_message(paste("1.","\n",
                    " - Note: galah has a 50 million record download limit.", "\n",
                    "You may call atlas_counts() to check.", "\n",
                    " - Additionally, you must register your email with your ", atlas, " otherwise you will get an ",
@@ -53,14 +52,13 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
   if(grepl( ".[^@]+@{1}.+\\..+", userEmail) == FALSE){
     stop("The email you entered might be incorrect, please double-check the format.")
   }
-  requireNamespace("galah")
   # Define ColsToKeep
   ColsToKeep <- BeeBDC::ColTypeR()[[1]] %>% names()
   # Create a new working directory for ALA data in the path provided
   dir.create(paste0(path, "/", atlas, "_galah_path", sep = ""), showWarnings = FALSE)
   atlas_galah_path <- paste0(path, "/", atlas, "_galah_path")
   # Set up the ALA download configuration
-  writeLines(" - Setting galah configuration.")
+  bee_message(" - Setting galah configuration.")
   galah::galah_config(directory = atlas_galah_path, 
                       download_reason_id = DL_reason,
                       verbose=TRUE, 
@@ -74,7 +72,7 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
   # Thank you, ALA <3
   # DOWNLOAD ALA data here
   # Apiformes is an informal name that is helpful to select the bee families out of the superfamily Apoidea.
-  writeLines(paste("2.","\n",
+  bee_message(paste("2.","\n",
                    " - Beginning atlas download via galah.", "\n",
                    "A progress bar of your download should appear shortly. You will also receive an email ",
                    "when your download is complete.", sep = ""))
@@ -89,7 +87,7 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
   # get download attributes from file and make it into a dataframe
   attrs_ALA_Occurence_download <- attributes(ALA_Occurence_download) 
   
-  writeLines(paste("3.","\n"," - atlas download is complete.", "\n",
+  bee_message(paste("3.","\n"," - atlas download is complete.", "\n",
                    "The script will now unzip all of the data and metadata to ",
                    atlas_galah_path, ". This may take a short while.",
                    sep = ""))
@@ -123,7 +121,7 @@ atlasDownloader <- function(path, userEmail = NULL, ALA_taxon, DL_reason = 4, at
                            "galah_DL_info.csv", 
                            sep = ""))
   # Write user instructions
-  writeLines(paste("4.","\n"," - Fin.",
+  bee_message(paste("4.","\n"," - Fin.",
                    sep = ""))
   
   return(ALA_Occurence_download)

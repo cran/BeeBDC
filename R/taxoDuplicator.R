@@ -12,12 +12,9 @@ taxoDuplicator <- function(
   # locally bind variables to the function
   validName <- accid <- id <- flags <- taxonomic_status <- canonical_withFlags <- canonical <- NULL
   
-    # Load required packages
-  requireNamespace("dplyr")
-  
   #### 0.0 Prep ####
   ##### 0.1 Remove existing flags ####
-  writeLines("Removing previous flags generated with this function")
+  bee_message("Removing previous flags generated with this function")
     # Remove the xisitng flags generated from this function
   SynList <- SynList %>%
     dplyr::mutate(flags = stringr::str_remove_all(flags, "non-ambiguous can_wFlags") %>%
@@ -36,7 +33,7 @@ taxoDuplicator <- function(
     dplyr::group_by(validName) %>%
     dplyr::filter(dplyr::n() > 1)
   # User output
-  writeLines(paste(" - ", format(nrow(duplicates), big.mark = ","),
+  bee_message(paste(" - ", format(nrow(duplicates), big.mark = ","),
                                  " duplicates found in the data.", sep = ""))
   
     # Build subsetted datasets to examine 
@@ -368,9 +365,24 @@ taxoDuplicator <- function(
                if(accTest == FALSE){ # Ad all as synonyms
                ambiSyns_51 <- ambiSyns_51 %>% 
                  dplyr::bind_rows(LoopTibble)
-               }else(
-                 stop(" - unique problem at 5.1. :(")
-               )
+               }else{
+                 if(source1 == "gbif"){
+                   # GBIF has some "doubtful" names that can be matched to the accepted one
+                   LoopTibble <- LoopTibble %>% 
+                     dplyr::group_by(taxonomic_status) 
+                   if(dplyr::n_groups(LoopTibble) == 2){
+                     # Find the accepted id
+                     Loopacc_id <- LoopTibble %>% dplyr::filter(taxonomic_status == "accepted") %>%
+                       dplyr::pull(id)
+                     LoopTibble <- LoopTibble %>% 
+                       dplyr::mutate(accid = dplyr::if_else(taxonomic_status == "accepted",
+                                                            accid, Loopacc_id))
+                     # Add the synonyms
+                     ambiSyns_52 <- ambiSyns_52 %>% 
+                       dplyr::bind_rows(LoopTibble)
+                   }
+                 }else{stop(" - unique problem at 5.2! :(")}
+               }
           } # END else
         } # END n > 2
       } # END Ambiguous loop
@@ -492,15 +504,30 @@ taxoDuplicator <- function(
               dplyr::bind_rows(LoopTibble)
           }else{ # ALL of the others have been ambiguous so far
             # Logical - if ALL but one accid matches an id, take the to mean they are all pointing at
-            # the same record. None shold match for now.
+            # the same record. None should match for now.
             accTest <- sum(LoopTibble$id %in% LoopTibble$accid) == nrow(LoopTibble)-1
             # Add these data to the ambiSyns_52 dataframe
-            if(accTest == FALSE){ # Ad all as synonyms
+            if(accTest == FALSE){ # Add all as synonyms
               ambiSyns_52 <- ambiSyns_52 %>% 
                 dplyr::bind_rows(LoopTibble)
-            }else(
-              stop(" - unique problem at 5.2! :(")
-            )
+            }else{
+              if(source1 == "gbif"){
+                  # GBIF has some "doubtful" names that can be matched to the accepted one
+                LoopTibble <- LoopTibble %>% 
+                  dplyr::group_by(taxonomic_status) 
+                if(dplyr::n_groups(LoopTibble) == 2){
+                  # Find the accepted id
+                  Loopacc_id <- LoopTibble %>% dplyr::filter(taxonomic_status == "accepted") %>%
+                    dplyr::pull(id)
+                  LoopTibble <- LoopTibble %>% 
+                    dplyr::mutate(accid = dplyr::if_else(taxonomic_status == "accepted",
+                                                         accid, Loopacc_id))
+                  # Add the synonyms
+                  ambiSyns_52 <- ambiSyns_52 %>% 
+                    dplyr::bind_rows(LoopTibble)
+                }
+              }else{stop(" - unique problem at 5.2! :(")}
+            }
           } # END else
         } # END n > 2
       } # END Ambiguous loop
@@ -571,7 +598,7 @@ taxoDuplicator <- function(
 
     # What an adventure that was!
     # Now, lets try and return some user information 
-writeLines(paste(    " - Cleaning complete! From an initial dataset of ", 
+bee_message(paste(    " - Cleaning complete! From an initial dataset of ", 
                  format(nrow(SynList), big.mark = ","), " names, there ",
                  "remain ", format(nrow(deDuplicated_52), big.mark = ",")," names.",  "\n",
                      " - We removed:", "\n"   ,
@@ -579,10 +606,10 @@ writeLines(paste(    " - Cleaning complete! From an initial dataset of ",
                  nrow(S2Acc2remove), " source2 'accepted' names,", "\n"))
                   # 2.2 - synonyms removed
 if(exists("nonAmbiSyns_deDuped")){
-                   writeLines(paste(
+                   bee_message(paste(
                  format(nrow(nonAmbiSyns)-nrow(nonAmbiSyns_deDuped), big.mark = ","),
                         " source1 synonyms,", "\n"   ))}
-writeLines(paste(
+bee_message(paste(
                  format(nrow(S2synonyms) - nrow(S2Unique), big.mark = ",")
                  , " source2 synonyms internally duplicated,", "\n"   ,
                  nrow(S2Duplicates)-nrow(S2Originals), " source2 synonyms duplicated with the source1 list,", "\n"   ,
